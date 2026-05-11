@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.mustasharuna.app",
+      "sha256_cert_fingerprints": [
+        "C3:D0:20:4D:25:84:D8:C3:A5:71:E7:28:2B:C0:05:0B:60:4F:2D:4E:90:C3:40:A5:54:24:41:08:1E:3E:54:81"
+      ]
+    }
+  }
+]

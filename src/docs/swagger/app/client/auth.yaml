@@ -1,0 +1,415 @@
+paths:
+  /app/client/auth/signup:
+    post:
+      summary: Client signup
+      description: Register a new client account with email, password, phone number, OTP, and full name.
+      tags:
+        - ClientAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - phone
+                - otp
+                - fullName
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: client@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: Password123
+                phone:
+                  type: string
+                  description: Phone number in international format
+                  example: "+201234567890"
+                otp:
+                  type: string
+                  description: 4-digit OTP code
+                  minLength: 4
+                  maxLength: 4
+                  example: "1234"
+                fullName:
+                  type: string
+                  example: "Ahmed Ali"
+      responses:
+        201:
+          description: Signup successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Client registered successfully"
+                  client:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      email:
+                        type: string
+                        format: email
+                      phone:
+                        type: string
+                      fullName:
+                        type: string
+                      balance:
+                        type: number
+                        format: float
+                      availableBalance:
+                        type: number
+                        format: float
+        400:
+          description: Validation error or invalid OTP
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Server error
+
+  /app/client/auth/login/otp:
+    post:
+      summary: Client login with OTP
+      description: Authenticate a client using phone number and OTP code.
+      tags:
+        - ClientAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - otp
+              properties:
+                phone:
+                  type: string
+                  description: Phone number in international format
+                  example: "+201234567890"
+                otp:
+                  type: string
+                  description: 4-digit OTP code
+                  minLength: 4
+                  maxLength: 4
+                  example: "1234"
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Login successful"
+                  accessToken:
+                    type: string
+                    description: JWT access token
+                  refreshToken:
+                    type: string
+                    description: JWT refresh token
+                  accessTokenExpiresIn:
+                    type: string
+                    format: date-time
+                  refreshTokenExpiresIn:
+                    type: string
+                    format: date-time
+                  client:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      phone:
+                        type: string
+                      fullName:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                      balance:
+                        type: number
+                        format: float
+                      availableBalance:
+                        type: number
+                        format: float
+        400:
+          description: Invalid request or OTP
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: Invalid credentials or OTP
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: Client not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Server error
+
+  /app/client/auth/login/email:
+    post:
+      summary: Client login with email
+      description: Authenticate a client using email and password.
+      tags:
+        - ClientAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: client@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  description: Password must contain at least one uppercase letter, one lowercase letter, and one number
+                  example: Password123
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Login successful"
+                  accessToken:
+                    type: string
+                    description: JWT access token
+                  refreshToken:
+                    type: string
+                    description: JWT refresh token
+                  accessTokenExpiresIn:
+                    type: string
+                    format: date-time
+                  refreshTokenExpiresIn:
+                    type: string
+                    format: date-time
+                  client:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      phone:
+                        type: string
+                      fullName:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                      balance:
+                        type: number
+                        format: float
+                      availableBalance:
+                        type: number
+                        format: float
+        400:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Server error
+
+  /app/client/auth/forget-password:
+    post:
+      summary: Forget client password
+      tags:
+        - ClientAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+                - otp
+                - newPassword
+              properties:
+                phone:
+                  type: string
+                otp:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        200:
+          description: Reset password initiated
+        400:
+          description: Validation error
+
+  /app/client/auth/generate-otp:
+    post:
+      summary: Generate OTP for client
+      description: Generate and send an OTP code to the provided phone number. Can be used for login or signup.
+      tags:
+        - ClientAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - phone
+              properties:
+                phone:
+                  type: string
+                  description: Phone number in international format
+                  example: "+201234567890"
+                isSignupOtp:
+                  type: boolean
+                  description: Whether this OTP is for signup (true) or login (false)
+                  default: false
+                  example: true
+      responses:
+        200:
+          description: OTP generated and sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "OTP sent successfully"
+        400:
+          description: Invalid phone number
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Server error
+
+  /app/client/auth/refresh-token:
+    post:
+      summary: Refresh access token
+      description: Generate a new access token using a valid refresh token.
+      tags:
+        - ClientAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+                  description: JWT refresh token
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      responses:
+        200:
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  accessToken:
+                    type: string
+                    description: New JWT access token
+                  accessTokenExpiresIn:
+                    type: string
+                    format: date-time
+        400:
+          description: Invalid refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        403:
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Server error
+
+  /app/client/auth/logout:
+    get:
+      summary: Client logout
+      description: Log out the currently authenticated client. Requires authentication.
+      tags:
+        - ClientAuth
+      security:
+        - clientGuard: []
+      responses:
+        200:
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logout successful"
+        403:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: Server error

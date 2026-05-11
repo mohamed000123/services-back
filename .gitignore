@@ -1,0 +1,15 @@
+.DS_Store
+node_modules
+.env
+.env.dev
+/dist
+.vscode
+/db/oldDB/data
+logs/
+*.log
+/logs/app.log
+/src/credentials/
+/src/generated/prisma
+/src/database/generated/
+/generated/prisma
+/db

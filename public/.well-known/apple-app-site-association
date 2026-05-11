@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "com.mustasharuna.app",
+        "paths": [
+          "/consultant/invitation-mail-setup*",
+          "/app/payment/result*"
+        ]
+      }
+    ]
+  }
+}
