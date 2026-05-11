@@ -1,10 +1,10 @@
-# Mustasharuna API
+# services API
 
-Backend API for the Mustasharuna platform built with Node.js, Express, TypeScript, and Prisma.
+Backend API for the services platform built with Node.js, Express, TypeScript, and Prisma.
 
 ## 🎯 Overview
 
-Mustasharuna API is a RESTful backend service that provides endpoints for managing administrators, companies, consultants, and their associated activities. The API supports role-based access control, activity logging, and comprehensive data management.
+services API is a RESTful backend service that provides endpoints for managing administrators, clients,  and their associated activities. The API supports role-based access control, and comprehensive data management.
 
 ## 🛠 Tech Stack
 
@@ -18,9 +18,6 @@ Mustasharuna API is a RESTful backend service that provides endpoints for managi
 - **Documentation**: Swagger/OpenAPI
 - **Logging**: Winston
 - **Security**: Helmet, CORS, Rate Limiting
-- **File Upload**: Multer
-- **Email**: Nodemailer
-- **Cloud Storage**: AWS S3
 
 ## 📦 Prerequisites
 
@@ -70,59 +67,7 @@ npm run db:seed
 
 ## ⚙️ Configuration
 
-Create a `.env` file in the root directory with the following environment variables:
-
-### Required Variables
-
-```env
-# Database
-DATABASE_URL="mysql://user:password@localhost:3306/mustasharuna"
-
-# Server
-PORT=8000
-NODE_ENV=development
-
-# Authentication
-ADMIN_COOKIE_SECRET=your-secret-key-here
-
-# Email Configuration
-EMAIL_SERVICE=gmail
-EMAIL_FROM=noreply@mustasharuna.com
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
-
-# AWS S3 (if using file uploads)
-AWS_REGION=us-east-1
-AWS_ACCESS_KEY_ID=your-access-key
-AWS_SECRET_ACCESS_KEY=your-secret-key
-AWS_S3_BUCKET_NAME=your-bucket-name
-
-# AWS SNS (SMS)
-SNS_SENDER_ID=your-sender-id
-
-# AWS Chime SDK
-CHIME_REGION=us-east-1
-CHIME_MEDIA_REGION=me-south-1
-```
-
-### Optional Variables
-
-```env
-# Request Limits
-REQUEST_LIMIT=10mb
-
-# Database Connection Pool
-DATABASE_MAX_CONNECTIONS=10
-DATABASE_CONNECTION_TIMEOUT=10000
-DATABASE_QUERY_TIMEOUT=30000
-
-# CORS
-CORS_ORIGIN=http://localhost:3000
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-```
+Create a `.env` file in the root directory with the required environment variables:
 
 ## 🗄 Database Setup
 
@@ -275,15 +220,9 @@ npm install
 
 ## 👤 Author
 
-**Hassan Ismail**
+**Mohamed Amin**
 
-- GitHub: [@mustasharunatechchef](https://github.com/mustasharunatechchef)
-
-## 🔗 Links
-
-- **Repository**: [https://github.com/mustasharunatechchef/backend](https://github.com/mustasharunatechchef/backend)
-- **Issues**: [https://github.com/mustasharunatechchef/backend/issues](https://github.com/mustasharunatechchef/backend/issues)
-
+- GitHub: https://github.com/mohamed000123/services-back
 ---
 
 For more information, please refer to the [API Documentation](http://localhost:8000/swagger) when the server is running.
