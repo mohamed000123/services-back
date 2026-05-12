@@ -52,11 +52,9 @@ class AuthAdminController {
       });
 
       res.status(200).json({
-        admin: {
-          fullName: admin.fullName,
-          role: admin.role,
-          expiresIn: remember_me ? 86400000 : 3600000, // 1 day or 1 hour
-        },
+        fullName: admin.fullName,
+        role: admin.role,
+        expiresIn: remember_me ? 86400000 : 3600000,
       });
     } catch (error: unknown) {
       errorHandler(error, res);
