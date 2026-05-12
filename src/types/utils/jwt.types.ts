@@ -1,5 +1,6 @@
 export interface VerifyRefreshTokenReturnType {
   clientId?: string;
+  adminId?: string;
   newEmail?: string;
   iat: number;
   exp: number;

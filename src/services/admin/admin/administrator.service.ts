@@ -35,6 +35,13 @@ class AdministratorService {
     });
   }
 
+  /** Active administrator by id (not soft-deleted). */
+  async findActiveById(id: string): Promise<Administrator | null> {
+    return prisma.administrator.findFirst({
+      where: { id, deletedAt: null },
+    });
+  }
+
   /**
    * Find administrator by email
    */

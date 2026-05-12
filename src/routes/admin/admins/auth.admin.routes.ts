@@ -1,7 +1,10 @@
 import { Router } from "express";
 import authAdminController from "@/controllers/admin/admins/auth.admin.controller";
 import { validateRequest } from "@/middlewares/validateRequest";
-import { loginWithEmailValidator } from "@/validators/common/auth.validator";
+import {
+  loginWithEmailValidator,
+  refreshTokenValidator,
+} from "@/validators/common/auth.validator";
 import { adminGuard } from "@/middlewares/adminGuard";
 
 const authAdminRouter: Router = Router();
@@ -12,9 +15,16 @@ authAdminRouter.post(
   "/login",
   loginWithEmailValidator,
   validateRequest,
-  authAdminController.login
+  authAdminController.login,
 );
 
-authAdminRouter.post("/logout", authAdminController.logout);
+authAdminRouter.post(
+  "/refresh-token",
+  refreshTokenValidator,
+  validateRequest,
+  authAdminController.refreshToken,
+);
+
+authAdminRouter.post("/logout", adminGuard, authAdminController.logout);
 
 export default authAdminRouter;

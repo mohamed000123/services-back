@@ -1,5 +1,8 @@
 import prisma from "./client";
 import { seedAdministrators } from "./seeders/administrators.seeder";
+import { seedCategories } from "./seeders/categories.seeder";
+import { seedDemoClients } from "./seeders/demoClients.seeder";
+import { seedServices } from "./seeders/services.seeder";
 
 async function main(): Promise<void> {
   // eslint-disable-next-line no-console
@@ -7,6 +10,9 @@ async function main(): Promise<void> {
 
   try {
     await seedAdministrators();
+    await seedCategories();
+    await seedServices();
+    await seedDemoClients();
     // eslint-disable-next-line no-console
     console.log("Database seed completed successfully!");
   } catch (error) {

@@ -1,9 +1,11 @@
 import prisma from "@/database/client";
 import type { Prisma, RefreshToken } from "@/database/generated/client";
+import { ValidationError } from "@/utils/customError";
 import crypto from "crypto";
 
-interface RefreshTokenOwner {
+export interface RefreshTokenOwner {
   clientId?: string;
+  adminId?: string;
 }
 
 class RefreshTokenService {
@@ -17,11 +19,22 @@ class RefreshTokenService {
       token,
       expiresAt,
       clientId,
+      adminId,
     }: {
       token: string;
       expiresAt: Date;
       clientId?: string;
+      adminId?: string;
     } = params;
+
+    const hasClient: boolean = typeof clientId === "string" && clientId.length > 0;
+    const hasAdmin: boolean = typeof adminId === "string" && adminId.length > 0;
+    if (hasClient === hasAdmin) {
+      throw new ValidationError(
+        "Refresh token must be issued for exactly one of client or administrator",
+      );
+    }
+
     const tokenHash: string = crypto
       .createHash("sha256")
       .update(token)
@@ -29,7 +42,8 @@ class RefreshTokenService {
     const data: Prisma.RefreshTokenCreateInput = {
       tokenHash,
       expiresAt,
-      ...(clientId ? { client: { connect: { id: clientId } } } : {}),
+      ...(hasClient ? { client: { connect: { id: clientId } } } : {}),
+      ...(hasAdmin ? { administrator: { connect: { id: adminId } } } : {}),
     };
     return prisma.refreshToken.create({ data });
   }
@@ -51,11 +65,16 @@ class RefreshTokenService {
   }
 
   async revokeAllForOwner(owner: RefreshTokenOwner): Promise<void> {
+    const where: Prisma.RefreshTokenWhereInput = { revokedAt: null };
+    if (owner.clientId) {
+      where.clientId = owner.clientId;
+    } else if (owner.adminId) {
+      where.adminId = owner.adminId;
+    } else {
+      return;
+    }
     await prisma.refreshToken.updateMany({
-      where: {
-        revokedAt: null,
-        ...(owner.clientId ? { clientId: owner.clientId } : {}),
-      },
+      where,
       data: {
         revokedAt: new Date(),
       },
@@ -71,12 +90,21 @@ class RefreshTokenService {
       .update(token)
       .digest("hex");
     const now: Date = new Date();
+    const hasClientOwner: boolean =
+      typeof owner.clientId === "string" && owner.clientId.length > 0;
+    const hasAdminOwner: boolean =
+      typeof owner.adminId === "string" && owner.adminId.length > 0;
+    const ownerFilter: Prisma.RefreshTokenWhereInput = hasClientOwner
+      ? { clientId: owner.clientId }
+      : hasAdminOwner
+        ? { adminId: owner.adminId }
+        : {};
     return prisma.refreshToken.findFirst({
       where: {
         tokenHash,
         revokedAt: null,
         expiresAt: { gt: now },
-        ...(owner.clientId ? { clientId: owner.clientId } : {}),
+        ...ownerFilter,
       },
     });
   }

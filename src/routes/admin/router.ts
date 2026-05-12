@@ -7,6 +7,9 @@ import { superAdminGuard } from "@/middlewares/superAdminGuard";
 import administratorAdminRouter from "./admins/administrator.admin.routes";
 import authAdminRouter from "./admins/auth.admin.routes";
 import adminSelfRouter from "./admins/admin-self.admin.routes";
+import catalogAdminRouter from "./catalog/catalog.admin.router";
+import clientsAdminRouter from "./clients/clients.admin.routes";
+import requestsAdminRouter from "./requests/requests.admin.routes";
 
 export const adminRouter: Router = Router();
 
@@ -15,6 +18,10 @@ adminRouter.use(cors(adminCorsOptions));
 adminRouter.use("/auth", authAdminRouter);
 
 adminRouter.use(adminGuard);
+
+adminRouter.use("/catalog", catalogAdminRouter);
+adminRouter.use("/clients", clientsAdminRouter);
+adminRouter.use("/requests", requestsAdminRouter);
 
 // Management routes: SUPER_ADMIN only. `/admin/auth/login` & `/admin/auth/logout` are public; `/admin/auth/me` uses route-level `adminGuard` (any role).
 adminRouter.use("/administrators", superAdminGuard, administratorAdminRouter);

@@ -273,6 +273,49 @@ rm -rf node_modules package-lock.json
 npm install
 ```
 
+## QuickFix — Service catalog & requests
+
+### New env (optional)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SOCKET_PATH` | `/socket.io` | Path for Socket.io (must match admin SPA `VITE_SOCKET_PATH`). |
+| `REQUEST_CREATE_WINDOW_MS` | `60000` | Sliding window for `POST /app/client/requests` rate limit per client. |
+| `REQUEST_CREATE_MAX` | `10` | Max creates per client per window. |
+
+### REST (summary)
+
+- **Admin** (cookie `sAAt`): `GET|POST|PATCH|DELETE /admin/catalog/categories`, `.../services` (soft delete + `POST .../restore`), `GET|POST|PATCH|DELETE /admin/clients`, `GET /admin/requests`, `GET /admin/requests/stats`, `GET /admin/requests/:id`, `PATCH /admin/requests/:id/status`.
+- **Mobile** (Bearer `accessToken`): `GET /app/client/categories`, `GET /app/client/services`, `POST|GET /app/client/requests`, `GET|PATCH /app/client/requests/:id` (cancel).
+
+### Realtime
+
+- Namespaces: `/realtime/admin` (JWT from cookie), `/realtime/client` (Bearer).
+- Events: `request:created`, `request:status_changed`, `request:updated`, `request:deleted`.
+
+### Seed demo client
+
+`npm run db:seed` creates `demo.client@example.com` / `DemoPass1` (see seeder). Catalog UUIDs in Postman collection match seeded services.
+
+### Postman
+
+Import [`QuickFix.postman_collection.json`](../QuickFix.postman_collection.json) from the monorepo root.
+
+### AI prompting strategy (backend)
+
+1. **Single source of truth** — Business rules live in `serviceRequest.service.ts` (transitions + history + emits); controllers stay thin.
+2. **Type safety** — Prisma `Decimal` serialized in JSON responses; validators use `express-validator` before hitting services.
+3. **Security** — Separate JWT secrets (`JWT_SECRET` vs `JWT_CLIENT_SECRET`); admin routes use `adminGuard`; app routes use `clientGuard` or public discovery.
+4. **Verification** — After schema changes: `npm run db:generate`, migrate, then hit `GET /admin/requests/stats` and a status PATCH to confirm history rows.
+
+### Manual QA checklist
+
+- [ ] `ADMIN_URL` CORS allows the Vite origin; credentials flow on `/admin/*`.
+- [ ] Client cannot access `/admin/*`; admin cookie cannot access `/app/client/*` guarded routes.
+- [ ] Invalid status transition returns **422** with message.
+- [ ] Rate limit on `POST /requests` returns **429** after burst.
+- [ ] Socket: admin dashboard receives `request:created` when mobile creates a request.
+
 ## 👤 Author
 
 **Hassan Ismail**
