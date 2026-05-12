@@ -15,6 +15,6 @@ authAdminRouter.post(
   authAdminController.login
 );
 
-authAdminRouter.get("/logout", authAdminController.logout);
+authAdminRouter.post("/logout", authAdminController.logout);
 
 export default authAdminRouter;

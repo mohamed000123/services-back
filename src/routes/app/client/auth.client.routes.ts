@@ -58,7 +58,7 @@ authClientRouter.post(
   authClientController.refreshToken,
 );
 
-authClientRouter.get(
+authClientRouter.post(
   "/logout",
   clientGuard,
   validateRequest,
